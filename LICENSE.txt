@@ -1,0 +1,13 @@
+ROAACCU Website - Proprietary License
+
+Copyright (c) 2026 EliTech CreaTives
+All Rights Reserved.
+
+This software and associated files (the "Software") are proprietary and confidential.
+Unauthorized copying, modification, distribution, or use of the Software, in whole or in part,
+is strictly prohibited without prior written permission from EliTech CreaTives.
+
+No license, express or implied, is granted to any person or entity under any patent,
+copyright, trademark, or other intellectual property right.
+
+For permission requests, contact EliTech CreaTives.
