@@ -1,6 +1,17 @@
 const toggle = document.querySelector(".nav__toggle");
 const menu = document.querySelector(".nav__menu");
 
+const closeMenu = () => {
+  if (!menu || !toggle) return;
+  menu.classList.remove("is-open");
+  toggle.classList.remove("is-open");
+  toggle.setAttribute("aria-expanded", "false");
+  // Close all dropdowns when closing menu
+  document.querySelectorAll(".nav__item.is-open").forEach((item) => {
+    item.classList.remove("is-open");
+  });
+};
+
 if (toggle && menu) {
   toggle.addEventListener("click", () => {
     const isOpen = menu.classList.toggle("is-open");
@@ -19,6 +30,10 @@ const setNavHeight = () => {
       `${nav.offsetHeight}px`
     );
   }
+  const isMobile = window.matchMedia("(max-width: 980px)").matches;
+  if (!isMobile) {
+    closeMenu();
+  }
 };
 
 const handleScroll = () => {
@@ -30,22 +45,59 @@ const handleScroll = () => {
   nav.classList.toggle("is-scrolled", window.scrollY > 10);
 };
 
-setNavHeight();
-handleScroll();
-window.addEventListener("resize", setNavHeight);
-window.addEventListener("scroll", handleScroll, { passive: true });
-
-const dropdownLinks = document.querySelectorAll(".nav__item > .nav__link");
-dropdownLinks.forEach((link) => {
-  link.addEventListener("click", (event) => {
+// Handle all nav menu clicks
+if (menu) {
+  menu.addEventListener("click", (event) => {
     const isMobile = window.matchMedia("(max-width: 980px)").matches;
     if (!isMobile) return;
-    event.preventDefault();
-    const item = link.closest(".nav__item");
-    if (!item) return;
-    item.classList.toggle("is-open");
+
+    // Get the closest anchor tag
+    const anchor = event.target.closest("a");
+    if (!anchor) return;
+
+    // If clicking a dropdown parent link (has-caret class)
+    if (anchor.classList.contains("has-caret")) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const item = anchor.closest(".nav__item");
+      if (!item) return;
+
+      // Close all other dropdowns
+      menu.querySelectorAll(".nav__item.is-open").forEach((otherItem) => {
+        if (otherItem !== item) {
+          otherItem.classList.remove("is-open");
+        }
+      });
+
+      // Toggle current dropdown
+      item.classList.toggle("is-open");
+    } else {
+      // Regular link or dropdown item - close menu
+      closeMenu();
+    }
+  }); // Removed capture phase
+}
+
+const scrollTopButton = document.querySelector(".scroll-top");
+
+const toggleScrollTop = () => {
+  if (!scrollTopButton) return;
+  scrollTopButton.classList.toggle("is-visible", window.scrollY > 320);
+};
+
+if (scrollTopButton) {
+  scrollTopButton.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
-});
+}
+
+setNavHeight();
+handleScroll();
+toggleScrollTop();
+window.addEventListener("resize", setNavHeight);
+window.addEventListener("scroll", handleScroll, { passive: true });
+window.addEventListener("scroll", toggleScrollTop, { passive: true });
 
 const messageInput = document.querySelector("#contactMessage");
 const countOutput = document.querySelector("#contactCount");
